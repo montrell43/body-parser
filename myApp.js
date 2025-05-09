@@ -10,7 +10,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 
 // Enable body parsing middleware for POST requests
-app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Root-level logger middleware
