@@ -1,61 +1,72 @@
-require('dotenv').config();
-const express = require('express');
-const app = express();
-const path = require('path');
-// 1. Require body-parser
-const bodyParser = require('body-parser');
+require('dotenv').config()
+let bodyParser = require("body-parser")
+let express = require('express')
+let app = express()
 
-// 2. Use body-parser middleware for URL-encoded data
-app.use(bodyParser.urlencoded({ extended: false }));
+// 1.
+// console.log("Hello World");
 
+// 2.
+/*
+app.get("/", (req, res) => {
+  res.send("Hello Express");
+});
+*/
 
-// Enable body parsing middleware for POST requests
-app.use(express.json());
+// 4. Adds page styling
+app.use("/public", express.static(__dirname + "/public"))
 
-// Root-level logger middleware
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.path} - ${req.ip}`);
-  next();
+// Middleware
+// app.use(bodyParser.urlencoded({ extended: false }))
+
+// 7. Implements root level request logger middleware
+// app.use((req, res, next) => {
+//   console.log(req.method + " " + req.path + " - " + req.ip)
+//   next()
+// });
+
+// 3. Fetchs index page
+app.get("/", (res, req) => {
+  req.sendFile(__dirname + "/views/index.html")
 });
 
-// Root route
-app.get('/', (req, res) => {
-  res.send('Welcome to the Express app!');
-});
+// 5. Fetchs json data
 
-// Echo route with route parameter
-app.get('/:word/echo', (req, res) => {
-  const word = req.params.word;
-  res.json({ echo: word });
-});
+// app.get("/json", (req, res) => {
+//   res.json({ "message": "Hello json" })
+// })
 
-// Route: GET /json with MESSAGE_STYLE from .env
-app.get('/json', (req, res) => {
-  const message = process.env.MESSAGE_STYLE === 'uppercase'
-    ? 'HELLO JSON'
-    : 'Hello json';
-  res.json({ message });
-});
 
-// Route: GET /now with chained middleware
-app.get('/now', (req, res, next) => {
-  req.time = new Date().toString();
-  next();
-}, (req, res) => {
-  res.json({ time: req.time });
-});
+// 6. Implements .env file
+app.get("/json", (req, res) => {
+  if (process.env.MESSAGE_STYLE === "uppercase") {
+    res.json({ "message": "HELLO JSON" })
+  } else {
+    res.json({ "message": "Hello json" })
+  }
+})
 
-// Route: GET and POST /name
-app.route('/name')
-  .get((req, res) => {
-    const firstName = req.query.first;
-    const lastName = req.query.last;
-    res.json({ name: `${firstName} ${lastName}` });
-  })
-  .post((req, res) => {
-    const firstName = req.body.first;
-    const lastName = req.body.last;
-    res.json({ name: `${firstName} ${lastName}` });
-  });
+// 8. Implements time server
+// app.get("/now", (req, res, next) => {
+//   req.time = new Date().toString()
+//   next()
+// }, (req, res) => {
+//   res.json({ "time": req.time })
+// })
+
+// 9. Implements echo server
+// app.get("/:word/echo", (req, res) => {
+//   res.json({ echo: req.params.word })
+// })
+
+// 10. Implements name server
+// app.get("/name", (req, res) => {
+//   res.json({ name: req.query.first + " " + req.query.last })
+// })
+
+// 12. Implements post request
+// app.post("/name", (req, res) => {
+//   res.json({ name: req.body.first + " " + req.body.last })
+// })
 
 module.exports = app;
